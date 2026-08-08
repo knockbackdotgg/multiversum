@@ -30,6 +30,7 @@ class VelocityNetworkBridge(
 
         val eventData = mapOf(
             "uuid" to player.uniqueId.toString(),
+            "name" to player.username,
             "currentServer" to currentServer,
             "previousServer" to (previousServer ?: ""),
             "isNetworkJoin" to isNetworkJoin
@@ -55,6 +56,7 @@ class VelocityNetworkBridge(
 
         val eventData = mapOf(
             "uuid" to player.uniqueId.toString(),
+            "name" to player.username,
             "lastServer" to lastServer,
             "isNetworkQuit" to true
         )

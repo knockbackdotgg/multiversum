@@ -7,6 +7,7 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.codemc.io/repository/maven-releases/")
 }
 
 dependencies {
@@ -17,6 +18,9 @@ dependencies {
 
     // luckperms
     compileOnly("net.luckperms:api:5.5")
+
+    // ProtocolLib for packet-level listeners (compileOnly; server should provide the plugin)
+    compileOnly("net.dmulloy2:ProtocolLib:5.4.0")
 }
 
 kotlin {
