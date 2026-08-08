@@ -1,0 +1,6 @@
+{
+  "id": "multiversum",
+  "name": "multiversum",
+  "version": "${version}",
+  "main": "org.tainorazum.multiversum.Multiversum"
+}
