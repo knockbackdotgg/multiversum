@@ -9,6 +9,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.event.user.UserDataRecalculateEvent
+import org.tainorazum.multiversum.utility.Colours
+import org.tainorazum.multiversum.utility.Text
 import java.util.concurrent.TimeUnit
 
 class TabManager(
@@ -173,10 +175,10 @@ class TabManager(
     private fun buildHeader(totalPlayers: Int): Component {
         val countText = if (totalPlayers == 1) "player" else "players"
         return Component.text("\n")
-            .append(Component.text("knockback.gg", NamedTextColor.GREEN))
+            .append(Text.toSmallTextComponent("knockback.gg", Colours.GREEN))
             .append(Component.text("\n\n"))
-            .append(Component.text(totalPlayers, NamedTextColor.GRAY))
-            .append(Component.text(" $countText", NamedTextColor.GRAY))
+            .append(Component.text(totalPlayers, Colours.GREY))
+            .append(Component.text(" $countText", Colours.GREY))
     }
 
     private fun buildFooter(): Component {
