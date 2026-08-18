@@ -7,6 +7,7 @@ import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.ProxyServer
 import org.slf4j.Logger
 import org.tainorazum.multiversum.config.ConfigManager
+import org.tainorazum.multiversum.listeners.CommandListener
 import org.tainorazum.multiversum.listeners.VelocityNetworkBridge
 import org.tainorazum.multiversum.redis.RedisPublisher
 import org.tainorazum.multiversum.tab.TabManager
@@ -41,6 +42,7 @@ class Multiversum @Inject constructor(
         tabManager.init()
 
         proxy.eventManager.register(this, VelocityNetworkBridge(proxy, tabManager))
+        proxy.eventManager.register(this, CommandListener(proxy))
 
         logger.info("Universum Velocity initialized using Redis: $redisUri")
     }
