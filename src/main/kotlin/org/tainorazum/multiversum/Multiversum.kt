@@ -1,4 +1,4 @@
-package org.tainorazum.multiversum;
+package org.tainorazum.multiversum
 
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
@@ -10,6 +10,7 @@ import org.tainorazum.multiversum.config.ConfigManager
 import org.tainorazum.multiversum.listeners.CommandListener
 import org.tainorazum.multiversum.listeners.VelocityNetworkBridge
 import org.tainorazum.multiversum.redis.RedisPublisher
+import org.tainorazum.multiversum.redis.RedisSubscriber
 import org.tainorazum.multiversum.tab.TabManager
 import java.io.File
 import java.nio.file.Files
@@ -37,6 +38,9 @@ class Multiversum @Inject constructor(
         val configFile = saveDefaultConfig()
         val redisUri = ConfigManager.getRedisUri(configFile)
         RedisPublisher.init(redisUri)
+
+        // Start listening for transfer requests over Redis
+        RedisSubscriber.startListening(proxy, redisUri)
 
         tabManager = TabManager(this, proxy)
         tabManager.init()

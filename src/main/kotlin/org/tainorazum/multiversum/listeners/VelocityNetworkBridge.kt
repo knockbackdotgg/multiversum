@@ -36,15 +36,11 @@ class VelocityNetworkBridge(
             "isNetworkJoin" to isNetworkJoin
         )
 
-        // 1. Publish Redis Event for Paper backend sync
         RedisPublisher.publish("velocity_player_switch", gson.toJson(eventData))
 
-        // 2. Handle Tab List appropriately
         if (isNetworkJoin) {
-            // Full setup: player just joined Velocity proxy
             tabManager.onPlayerJoin(player)
         } else {
-            // Server hop: player is already in Tab; just update their profile/display name
             tabManager.updatePlayerDisplayName(player)
         }
     }
@@ -62,8 +58,6 @@ class VelocityNetworkBridge(
         )
 
         RedisPublisher.publish("velocity_player_disconnect", gson.toJson(eventData))
-
-        // Clean up player from everyone's Tab list
         tabManager.onPlayerQuit(player)
     }
 }
