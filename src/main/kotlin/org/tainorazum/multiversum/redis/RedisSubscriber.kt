@@ -7,6 +7,11 @@ import redis.clients.jedis.JedisPubSub
 import java.util.UUID
 import java.util.concurrent.ForkJoinPool
 
+data class PlayerSendPayload(
+    val uuid: String,
+    val targetServer: String
+)
+
 object RedisSubscriber {
 
     private val gson = Gson()
@@ -17,11 +22,11 @@ object RedisSubscriber {
                 val jedis = Jedis(redisUri)
                 jedis.subscribe(object : JedisPubSub() {
                     override fun onMessage(channel: String, message: String) {
-                        if (channel == "velocity_send_player") {
+                        if (channel == "velocity_player_send") {
                             handleSendPlayer(proxy, message)
                         }
                     }
-                }, "velocity_send_player")
+                }, "velocity_player_send")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -30,13 +35,11 @@ object RedisSubscriber {
 
     private fun handleSendPlayer(proxy: ProxyServer, json: String) {
         try {
-            val data = gson.fromJson(json, Map::class.java)
-            val uuidString = data["uuid"] as? String ?: return
-            val targetServerName = data["targetServer"] as? String ?: return
+            val payload = gson.fromJson(json, PlayerSendPayload::class.java) ?: return
 
-            val uuid = UUID.fromString(uuidString)
+            val uuid = UUID.fromString(payload.uuid)
             val player = proxy.getPlayer(uuid).orElse(null) ?: return
-            val targetServer = proxy.getServer(targetServerName).orElse(null) ?: return
+            val targetServer = proxy.getServer(payload.targetServer).orElse(null) ?: return
 
             player.createConnectionRequest(targetServer).connect()
         } catch (e: Exception) {
