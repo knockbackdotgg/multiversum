@@ -5,7 +5,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPubSub
 import java.util.UUID
-import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.atomic.AtomicReference
 
 data class PlayerSendPayload(
     val uuid: String,
@@ -15,22 +15,45 @@ data class PlayerSendPayload(
 object RedisSubscriber {
 
     private val gson = Gson()
+    private val redisListenerThread = AtomicReference<Thread?>()
 
     fun startListening(proxy: ProxyServer, redisUri: String) {
-        ForkJoinPool.commonPool().execute {
-            try {
-                val jedis = Jedis(redisUri)
-                jedis.subscribe(object : JedisPubSub() {
-                    override fun onMessage(channel: String, message: String) {
-                        if (channel == "velocity_player_send") {
-                            handleSendPlayer(proxy, message)
-                        }
+        val existing = redisListenerThread.get()
+        if (existing != null && existing.isAlive) {
+            return
+        }
+
+        val thread = Thread {
+            while (!Thread.currentThread().isInterrupted) {
+                try {
+                    Jedis(redisUri).use { jedis ->
+                        jedis.subscribe(object : JedisPubSub() {
+                            override fun onMessage(channel: String, message: String) {
+                                if (channel == "velocity_player_send") {
+                                    handleSendPlayer(proxy, message)
+                                }
+                            }
+                        }, "velocity_player_send")
                     }
-                }, "velocity_player_send")
-            } catch (e: Exception) {
-                e.printStackTrace()
+                } catch (e: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                    break
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    try {
+                        Thread.sleep(5000L)
+                    } catch (sleepEx: InterruptedException) {
+                        Thread.currentThread().interrupt()
+                        break
+                    }
+                }
             }
         }
+
+        redisListenerThread.set(thread)
+        thread.name = "multiversum-redis-subscriber"
+        thread.isDaemon = true
+        thread.start()
     }
 
     private fun handleSendPlayer(proxy: ProxyServer, json: String) {

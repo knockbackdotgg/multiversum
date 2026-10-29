@@ -48,7 +48,7 @@ class Multiversum @Inject constructor(
         proxy.eventManager.register(this, VelocityNetworkBridge(proxy, tabManager))
         proxy.eventManager.register(this, CommandListener(proxy))
 
-        logger.info("Universum Velocity initialized using Redis: $redisUri")
+        logger.info("Multiversum initialized.")
     }
 
     private fun saveDefaultConfig(): File {

@@ -9,26 +9,25 @@ object Text {
 
     fun NEXT_LINE() = Component.text("\n")
 
-    fun toSmallText(text: String) : String {
+    fun toSmallText(text: String): String {
         val alphabetShort = "ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘQʀꜱᴛᴜᴠᴡxʏᴢ⁰¹²³⁴⁵⁶⁷⁸⁹"
         val alphabetNormal = "abcdefghijklmnopqrstuvwxyz0123456789"
-        text.lowercase()
+        val normalizedText = text.lowercase()
 
-        return text.map { ch ->
+        return normalizedText.map { ch ->
             val lower = ch.lowercaseChar()
             val index = alphabetNormal.indexOf(lower)
             if (index != -1) alphabetShort[index] else ch
         }.joinToString("")
-
     }
 
-    fun toSmallTextComponent(text: String, color: TextColor) : Component {
+    fun toSmallTextComponent(text: String, color: TextColor): Component {
         val alphabetShort = "ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘQʀꜱᴛᴜᴠᴡxʏᴢ"
         val alphabetNormal = "abcdefghijklmnopqrstuvwxyz"
-        text.lowercase();
+        val normalizedText = text.lowercase()
 
         return Component.text(
-            text.map { ch ->
+            normalizedText.map { ch ->
                 val lower = ch.lowercaseChar()
                 val index = alphabetNormal.indexOf(lower)
                 if (index != -1) alphabetShort[index] else ch
